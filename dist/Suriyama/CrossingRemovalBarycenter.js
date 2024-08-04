@@ -2,6 +2,7 @@ export class CrossingRemovalBarycenter {
     constructor() {
     }
     removeCrossings(layer, graph) {
+        // layer[layer.length-1] =  [ layer[layer.length-1][2] , layer[layer.length-1][3], layer[layer.length-1][1] ,layer[layer.length-1][0] ] ;
         let fixedLayer = layer[layer.length - 1];
         for (let i = layer.length - 2; i >= 0; i--) {
             if (layer[i].length > 1) {

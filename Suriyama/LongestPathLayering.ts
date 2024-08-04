@@ -1,6 +1,6 @@
 import { Edge } from "../Graph/Edge.js";
-import { Graph } from "../Graph/Graph.js";
 import { Vertex } from "../Graph/Vertex.js";
+import { copyGraph } from "../GraphUtils.js";
 
 export class LongestPathLayering{
     
@@ -18,7 +18,7 @@ export class LongestPathLayering{
      * @returns The array of layers -> L[0] is the deepest layer
      */
     private assignLayers(){
-        let graph = this.copyGraph(this.graph);
+        let graph = copyGraph(this.graph);
         // Define Layers
         let layers = [];
 
@@ -39,7 +39,7 @@ export class LongestPathLayering{
      * @returns The updated layers and the graph with the new verteces
      */
     private createDummyVerteces(layers:IVertex[][]){
-        let graph = this.copyGraph(this.graph);
+        let graph = copyGraph(this.graph);
 
         for (let i = 0; i < layers.length - 1; i++) {
             const currentLayer = layers[i];
@@ -64,17 +64,6 @@ export class LongestPathLayering{
             }
         }
         return graph;
-    }
-    private copyGraph(_graph:IGraph){
-        //Make copy
-        let copy = new Graph();
-        for(let v of _graph.getVertices()){
-            copy.addNode(v);
-        }
-        for(let e of _graph.getEdges()){
-            copy.addEdge(e);
-        }
-        return copy;
     }
 
 }

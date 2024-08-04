@@ -1,44 +1,43 @@
-
 import { Edge } from "./Graph/Edge.js";
 import { Graph } from "./Graph/Graph.js";
 import { Vertex } from "./Graph/Vertex.js";
-import { CoordinateAssignment } from "./Suriyama/CoordinatesAssignment.js";
-import { CrossingRemovalBarycenter } from "./Suriyama/CrossingRemovalBarycenter.js";
-import { GreedyCycleRemoval } from "./Suriyama/GreedyCycleRemoval.js";
-import { LongestPathLayering } from "./Suriyama/LongestPathLayering.js";
 
-
-export function SuriyamaMethodology(){
-    let {verteces,edges} = generate_slide_graph();
-    let graph = populateGraph(verteces,edges);
-    let acyclicGraph = populateGraph(verteces,edges);
-    
-    printGraph(graph);
-    console.log("Is cyclic?",graph.isCyclic());
-
-    let gcr = new GreedyCycleRemoval(graph,acyclicGraph);
-    let invertedEdges = gcr.removeCycle();
-
-    let lpl = new LongestPathLayering(acyclicGraph);
-    let {layers,graphDummy} = lpl.computeLayering();
-
-    let cr = new CrossingRemovalBarycenter();
-    cr.removeCrossings(layers,graphDummy);
-
-    let ca = new CoordinateAssignment();
-    let coordMap = ca.assignCoord(layers);
-
-    return [layers,graphDummy,acyclicGraph,coordMap];
-
+export function copyGraph(_graph:IGraph){
+    //Make copy
+    let copy = new Graph();
+    for(let v of _graph.getVertices()){
+        copy.addNode(v);
+    }
+    for(let e of _graph.getEdges()){
+        copy.addEdge(e);
+    }
+    return copy;
 }
-function populateGraph(v:IVertex[],edges:IEdge[]){
-    let graph = new Graph();
-    //Populate Graph
-    v.forEach(vert =>graph.addNode(vert)); 
 
-    edges.forEach(e=>graph.addEdge(e));
+export function generateGraph(nodesSet:Set<string>,data:any){
+    let graph = new Graph();
+    let labelMap = new Map<string,IVertex>();
+    let arrayNodes = Array.from(nodesSet);
+
+    for(let i=0; i<arrayNodes.length; i++){
+        let vertex = new Vertex();
+        vertex.setLabel(arrayNodes[i]);
+        graph.addNode(vertex);
+        labelMap.set(arrayNodes[i],vertex)
+    }
+
+    for(let link of data){
+        let s = labelMap.get(link.source);
+        let t = labelMap.get(link.target);
+        if(s == undefined || t == undefined)
+            throw Error("Source or target undefined");
+        let edge = new Edge(s,t);
+        graph.addEdge(edge);
+    }
+
     return graph;
 }
+
 export function generate_slide_graph(){
     
     let v:IVertex[] = [];
@@ -64,14 +63,22 @@ export function generate_slide_graph(){
     edges.push(new Edge (v[10],v[11]));
     edges.push(new Edge (v[11],v[3]));
     v.shift();
-    return {verteces:v,edges:edges};
+
+    // return {verteces:v,edges:edges};
+
+    let graph = new Graph();
+    //Populate Graph
+    v.forEach(vert =>graph.addNode(vert)); 
+
+    edges.forEach(e=>graph.addEdge(e));
+    return graph;
 
 }
 /**
  * PRINT THE GRAPH IN CONSOLE
  * @param graph 
  */
-function printGraph(graph:IGraph){
+export function printGraph(graph:IGraph){
     for(let v of graph.getVertices()){
         let incidents = graph.getIncidentEdgesOf(v);
         let string = "Node: "+v.getId()+" -----> "
@@ -83,4 +90,3 @@ function printGraph(graph:IGraph){
         console.log(string);
     }
 }
-

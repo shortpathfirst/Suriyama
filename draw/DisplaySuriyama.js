@@ -1,9 +1,6 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import {SuriyamaMethodology} from '../index.js'
 
-displaySuriyama();
-function displaySuriyama(){
-    let [layers,dummyGraph,originalG,coordMap]= SuriyamaMethodology();
+export function displaySuriyama(layers,dummyGraph,originalG,coordMap){
 
     const width = 700;
     const height = 680;
@@ -73,7 +70,7 @@ function displaySuriyama(){
             .data(layers[i])
             .join("text")
             .text(function(d) {
-                if(originalG.getVertices().includes(d)){return d.getId()} else{return ""}
+                if(originalG.getVertices().includes(d)){return d.getLabel()} else{return ""}
             })
             .attr('x', function(d) {
                 return coordMap.get(d).x;
@@ -93,7 +90,6 @@ function displaySuriyama(){
             .style("opacity",0.7)
             .attr("cursor","pointer");
     }
-   
-    d3.select("body").append(()=>svg.node());
-
+    
+    return svg.node();
 }

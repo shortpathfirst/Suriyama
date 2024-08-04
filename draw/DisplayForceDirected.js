@@ -1,36 +1,6 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-fetchData().then((data)=>{
-    var nodesSet = new Set();
-
-    // Compute the distinct nodes from the links.
-    data.forEach((link)=>{
-        nodesSet.add(link.source);
-        nodesSet.add(link.target);
-    });
-
-    console.log("nodes",nodesSet)
-    console.log("links",data)
-
-    let svg = computeGraph(Array.from(nodesSet),data);
-
-    d3.select("body").append(() => svg);
-});
-
-async function fetchData(){
-    let data = await d3.dsv(",", "data/slideGraph.csv", (d) => {
-        return {
-            source : d.source,
-            target : d.target,
-            value : +d.value,
-    }});
-    //Remove Index
-    // data = data.slice(0,data.length-1);
-    return data;
-}
-
-
-function computeGraph(dataNodes,dataLinks){
+export function displayForceDirected(dataNodes,dataLinks){
     const width = 928;
     const height = 680;
 

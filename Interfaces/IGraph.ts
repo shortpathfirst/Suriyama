@@ -25,7 +25,7 @@ interface IGraph{
  
     dfsVisit(v1:IVertex):IVertex[];
 
-    isCyclic(root:IVertex):boolean;
+    isCyclic():boolean;
     
     //Helper
     findInOutDegree():{inDegree:Map<IVertex,number>,outDegree:Map<IVertex,number>};

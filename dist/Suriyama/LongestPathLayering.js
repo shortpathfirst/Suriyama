@@ -1,6 +1,6 @@
 import { Edge } from "../Graph/Edge.js";
-import { Graph } from "../Graph/Graph.js";
 import { Vertex } from "../Graph/Vertex.js";
+import { copyGraph } from "../GraphUtils.js";
 export class LongestPathLayering {
     constructor(graph) {
         this.graph = graph;
@@ -17,7 +17,7 @@ export class LongestPathLayering {
      * @returns The array of layers -> L[0] is the deepest layer
      */
     assignLayers() {
-        let graph = this.copyGraph(this.graph);
+        let graph = copyGraph(this.graph);
         // Define Layers
         let layers = [];
         while (graph.getSink()) {
@@ -35,7 +35,7 @@ export class LongestPathLayering {
      * @returns The updated layers and the graph with the new verteces
      */
     createDummyVerteces(layers) {
-        let graph = this.copyGraph(this.graph);
+        let graph = copyGraph(this.graph);
         for (let i = 0; i < layers.length - 1; i++) {
             const currentLayer = layers[i];
             const nextLayer = layers[i + 1];
@@ -58,17 +58,6 @@ export class LongestPathLayering {
             }
         }
         return graph;
-    }
-    copyGraph(_graph) {
-        //Make copy
-        let copy = new Graph();
-        for (let v of _graph.getVertices()) {
-            copy.addNode(v);
-        }
-        for (let e of _graph.getEdges()) {
-            copy.addEdge(e);
-        }
-        return copy;
     }
 }
 //# sourceMappingURL=LongestPathLayering.js.map
