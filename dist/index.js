@@ -5,6 +5,8 @@ import { CoordinateAssignment } from "./Suriyama/CoordinatesAssignment.js";
 import { CrossingRemovalBarycenter } from "./Suriyama/CrossingRemovalBarycenter.js";
 import { GreedyCycleRemoval } from "./Suriyama/GreedyCycleRemoval.js";
 import { LongestPathLayering } from "./Suriyama/LongestPathLayering.js";
+
+
 export function SuriyamaMethodology() {
     let { verteces, edges } = generate_slide_graph();
     let graph = populateGraph(verteces, edges);

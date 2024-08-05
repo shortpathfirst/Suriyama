@@ -32,13 +32,6 @@ export function generateGraph(nodesSet, data) {
     }
     return graph;
 }
-function populateGraph(v, edges) {
-    let graph = new Graph();
-    //Populate Graph
-    v.forEach(vert => graph.addNode(vert));
-    edges.forEach(e => graph.addEdge(e));
-    return graph;
-}
 export function generate_slide_graph() {
     let v = [];
     let edges = [];
@@ -61,7 +54,11 @@ export function generate_slide_graph() {
     edges.push(new Edge(v[11], v[3]));
     v.shift();
     // return {verteces:v,edges:edges};
-    return populateGraph(v, edges);
+    let graph = new Graph();
+    //Populate Graph
+    v.forEach(vert => graph.addNode(vert));
+    edges.forEach(e => graph.addEdge(e));
+    return graph;
 }
 /**
  * PRINT THE GRAPH IN CONSOLE

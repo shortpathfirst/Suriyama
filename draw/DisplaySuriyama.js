@@ -2,7 +2,7 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function displaySuriyama(layers,dummyGraph,originalG,coordMap){
 
-    const width = 700;
+    const width = 900;
     const height = 680;
         // Create the SVG container.
     const svg = d3.create("svg")
