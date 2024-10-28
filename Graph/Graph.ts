@@ -1,5 +1,5 @@
     //DIRECTED GRAPH
-
+    
 export class Graph implements IGraph{
 
     private vertices = new Set<IVertex>();
@@ -130,7 +130,7 @@ export class Graph implements IGraph{
         this.vertices.forEach(vertex=>{
   
             if(this.isCyclicDFS(vertex,visitedList,restack,undefined!)){
-                return  isCyclic = true;
+                isCyclic = true;
             }
             
         });
@@ -221,6 +221,11 @@ export class Graph implements IGraph{
             }
         }
         return sinks;
+    }
+    invertEdge(edge:IEdge){
+        this.removeEdge(edge);
+        edge.invertSourceTarget();
+        this.addEdge(edge);
     }
 
 }

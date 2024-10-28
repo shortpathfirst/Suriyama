@@ -7,15 +7,16 @@ import { LongestPathLayering } from "./Suriyama/LongestPathLayering.js";
 
 export function SuriyamaMethodology(inputGraph:IGraph){
 
-    let graph = copyGraph(inputGraph);
-
     printGraph(inputGraph);
-    console.log("Is cyclic?",graph.isCyclic());
-
-    let gcr = new GreedyCycleRemoval(inputGraph,graph);
+    console.log("Is cyclic?",inputGraph.isCyclic());
+  
+    let gcr = new GreedyCycleRemoval(inputGraph);
     let invertedEdges = gcr.removeCycle();
 
-    let lpl = new LongestPathLayering(graph);
+    console.log("Inverted Edges:",invertedEdges);
+    console.log("Is now cyclic?",inputGraph.isCyclic());
+ 
+    let lpl = new LongestPathLayering(inputGraph);
     let {layers,graphDummy} = lpl.computeLayering();
 
     let cr = new CrossingRemovalBarycenter();
@@ -24,7 +25,7 @@ export function SuriyamaMethodology(inputGraph:IGraph){
     let ca = new CoordinateAssignment();
     let coordMap = ca.assignCoord(layers);
 
-    return [layers,graphDummy,graph,coordMap];
+    return [layers,graphDummy,inputGraph,coordMap];
 
 }
 

@@ -34,5 +34,6 @@ interface IGraph{
     getSink():IVertex;
     getSource():IVertex;
     getAllSinks():IVertex[];
+    invertEdge(edge:IEdge):void;
 
 }
