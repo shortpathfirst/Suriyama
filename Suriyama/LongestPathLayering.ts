@@ -2,31 +2,31 @@ import { Edge } from "../Graph/Edge.js";
 import { Vertex } from "../Graph/Vertex.js";
 import { copyGraph } from "../GraphUtils.js";
 
-export class LongestPathLayering{
-    
-    constructor(private graph:IGraph){
+export class LongestPathLayering {
+
+    constructor(private graph: IGraph) {
     }
-    computeLayering(){
+    computeLayering() {
         //check if acyclic
         let layers = this.assignLayers();
-        let graphDummy =  this.createDummyVerteces(layers);
-        return {layers,graphDummy}
+        let graphDummy = this.createDummyVertices(layers);
+        return { layers, graphDummy }
     }
     /**
      * 
      * @param graph Acyclic Graph
      * @returns The array of layers -> L[0] is the deepest layer
      */
-    private assignLayers(){
+    private assignLayers() {
         let graph = copyGraph(this.graph);
         // Define Layers
         let layers = [];
 
-        while(graph.getSink()){
+        while (graph.getSink()) {
             let sinks = graph.getAllSinks();
 
             layers.unshift(sinks);
-            for(let sink of sinks){
+            for (let sink of sinks) {
                 graph.removeNode(sink);
             }
         }
@@ -38,32 +38,45 @@ export class LongestPathLayering{
      * @param layers 
      * @returns The updated layers and the graph with the new verteces
      */
-    private createDummyVerteces(layers:IVertex[][]){
-        let graph = copyGraph(this.graph);
+    private createDummyVertices(layers: IVertex[][]) {
 
-        for (let i = 0; i < layers.length - 1; i++) {
-            const currentLayer = layers[i];
-            const nextLayer = layers[i + 1];
+        const graph = copyGraph(this.graph);
 
-            for(let vertex of currentLayer){
-                const outgoingEdges = graph.getIncidentEdgesOf(vertex);
-                for(let edge of outgoingEdges){
-                    let target = edge.getTarget();
-                    if(!nextLayer.includes(target)){
+        for (let i = 0; i < layers.length; i++) {
+            // Iterate shallow copy of current layer
+            for (let v of [...layers[i]]) {
+
+                const outgoingEdges = graph.getOutgoingEdges(v);
+
+                for (let e of outgoingEdges) {
+
+                    const target = e.getTarget();
+
+                    let nextLayer = layers.findIndex(l => l.includes(target));
+
+                    // If the next layer doen't include target
+                    if (nextLayer > i + 1) {
                         //Remove The old Edge
-                        graph.removeEdge(edge);
-                        //Add Dummy Vertex
-                        let dummyV = new Vertex();
-                        graph.addNode(dummyV);
-                        graph.addEdge(new Edge(vertex,dummyV));
-                        graph.addEdge(new Edge(dummyV,target));
-                        //Add it to the layer
-                        nextLayer.push(dummyV);
+                        graph.removeEdge(e);
+
+                        let prev = v;
+
+                        for (let k = i + 1; k < nextLayer; k++) {
+                            //Add Dummy Vertex
+                            const dummyV = new Vertex();
+                            graph.addNode(dummyV);
+                            layers[k].push(dummyV);
+
+                            graph.addEdge(new Edge(prev, dummyV));
+                            prev = dummyV;
+                        }
+
+                        graph.addEdge(new Edge(prev, target));
                     }
                 }
             }
         }
+
         return graph;
     }
-
 }

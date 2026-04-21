@@ -1,44 +1,93 @@
-export class CrossingRemovalBarycenter{
-    constructor(){
+export class CrossingRemovalBarycenter {
 
-    }
+    removeCrossings(
+        layers: IVertex[][],
+        graph: IGraph,
+        iterations = 4
+    ) {
 
-    removeCrossings(layer:IVertex[][],graph:IGraph){
-        // layer[layer.length-1] =  [ layer[layer.length-1][2] , layer[layer.length-1][3], layer[layer.length-1][1] ,layer[layer.length-1][0] ] ;
-        let fixedLayer = layer[layer.length-1];
+        for (let iter = 0; iter < iterations; iter++) {
 
-        for(let i=layer.length-2; i>=0; i--){
-            if(layer[i].length > 1){
-                //Barycenter
-                let barycenters = this.computeBarycenter(fixedLayer,layer[i],graph);
-                //Sort barycenter
-                let sortedBarycenters = new Map([...barycenters.entries()].sort())
-                //Apply to the layer
-                layer[i] = Array.from(sortedBarycenters.keys());
+            // 🔽 Downward sweep
+            for (let i = 1; i < layers.length; i++) {
+                this.orderLayer(layers[i - 1], layers[i], graph, true);
             }
-            fixedLayer = layer[i];
+
+            // 🔼 Upward sweep
+            for (let i = layers.length - 2; i >= 0; i--) {
+                this.orderLayer(layers[i + 1], layers[i], graph, false);
+            }
         }
     }
+
+    private orderLayer(
+        fixedLayer: IVertex[],
+        freeLayer: IVertex[],
+        graph: IGraph,
+        useIncoming: boolean
+    ) {
+
+        const pos = new Map<IVertex, number>();
+        fixedLayer.forEach((v, i) => pos.set(v, i));
+
+        const originalIndex = new Map<IVertex, number>();
+        freeLayer.forEach((v, i) => originalIndex.set(v, i));
+        // Compute Barycenter
+        const bary = this.computeBarycenter(
+            pos,
+            freeLayer,
+            graph,
+            useIncoming
+        );
+        // Order Barycenter
+        freeLayer.sort((a, b) => {
+            const diff = bary.get(a)! - bary.get(b)!;
+            return diff !== 0
+                ? diff
+                : originalIndex.get(a)! - originalIndex.get(b)!;
+        });
+    }
+    
     /**
      * Calculate the barycenter = 1/deg(u) * sum(x(v))
-     * @param L1 Fixed layer
-     * @param L2 Layer to calculate barycenter
+     * @param layer Free Layer To Calculate barycenter
+     * @param pos
      */
-    private computeBarycenter(L1:IVertex[],L2:IVertex[],graph:IGraph):Map<IVertex,number>{
-        let l2Barycenters = new Map<IVertex,number>();
+    private computeBarycenter(
+        pos: Map<IVertex, number>,
+        layer: IVertex[],
+        graph: IGraph,
+        useIncoming: boolean
+    ): Map<IVertex, number> {
 
-        for(let i=0; i<L2.length; i++){
-            const edges = graph.getIncidentEdgesOf(L2[i]);
+        const result = new Map<IVertex, number>();
+
+        for (let v of layer) {
+
+            const edges = useIncoming
+                ? graph.getIncomingEdges(v)
+                : graph.getOutgoingEdges(v);
+
             const degree = edges.length;
-            let sumPositions = 0;
-            for(let edge of edges){
-                const target = edge.getTarget();
-                sumPositions += L1.indexOf(target);
+
+            if (degree === 0) {
+                result.set(v, Number.POSITIVE_INFINITY);
+                continue;
             }
-            let barycenter = sumPositions / degree;
-            l2Barycenters.set(L2[i],barycenter);
+
+            let sumPosition = 0;
+
+            for (let e of edges) {
+                const neighbor = useIncoming
+                    ? e.getSource()
+                    : e.getTarget();
+
+                sumPosition += pos.get(neighbor) ?? 0;
+            }
+
+            result.set(v, sumPosition / degree);
         }
 
-        return l2Barycenters;
+        return result;
     }
 }

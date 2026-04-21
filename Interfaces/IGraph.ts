@@ -1,39 +1,40 @@
-interface IGraph{
-    getVertices():IVertex[];
-    
-    getEdges():IEdge[];
+interface IGraph {
+    getVertices(): IVertex[];
 
-    getDegreeOf(v:IVertex):number;
+    getEdges(): IEdge[];
 
-    getIncidentEdgesOf(v1:IVertex):IEdge[];
+    getDegreeOf(v: IVertex): number;
 
-    getEdgeOf(v1:IVertex,v2:IVertex):IEdge;//new
+    getIncidentEdgesOf(v1: IVertex): IEdge[];
 
-    getAdjacentsOf(v1:IVertex):IVertex[];
+    getEdgeOf(v1: IVertex, v2: IVertex): IEdge;//new
 
-    areAdjacents(v1:IVertex, v2:IVertex):boolean;
- 
-    addNode(v1:IVertex):void;
- 
-    addEdge(e1:IEdge):void;
- 
-    removeNode(v1:IVertex):void;
- 
-    removeEdge(e1:IEdge):void;
- 
-    bfsVisit(v1:IVertex):IVertex[];
- 
-    dfsVisit(v1:IVertex):IVertex[];
+    getAdjacentsOf(v1: IVertex): IVertex[];
 
-    isCyclic():boolean;
-    
+    areAdjacents(v1: IVertex, v2: IVertex): boolean;
+
+    addNode(v1: IVertex): void;
+
+    addEdge(e1: IEdge): void;
+
+    removeNode(v1: IVertex): void;
+
+    removeEdge(e1: IEdge): void;
+
+    bfsVisit(v1: IVertex): IVertex[];
+
+    dfsVisit(v1: IVertex): IVertex[];
+
+    isCyclic(): boolean;
+
     //Helper
-    findInOutDegree():{inDegree:Map<IVertex,number>,outDegree:Map<IVertex,number>};
-    isSource(v:IVertex):boolean;
-    isSink(v:IVertex):boolean;
-    getSink():IVertex;
-    getSource():IVertex;
-    getAllSinks():IVertex[];
-    invertEdge(edge:IEdge):void;
-
+    findInOutDegree(): { inDegree: Map<IVertex, number>, outDegree: Map<IVertex, number> };
+    isSource(v: IVertex): boolean;
+    isSink(v: IVertex): boolean;
+    getSink(): IVertex;
+    getSource(): IVertex;
+    getAllSinks(): IVertex[];
+    invertEdge(edge: IEdge): void;
+    getIncomingEdges(v: IVertex): IEdge[];
+    getOutgoingEdges(v: IVertex): IEdge[];
 }
