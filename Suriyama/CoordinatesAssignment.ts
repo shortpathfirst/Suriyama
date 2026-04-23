@@ -1,6 +1,8 @@
+import { IVertex } from "../Graph/interface/IVertex";
+
 export class CoordinateAssignment {
     private _ySpacing = 100;
-    private _xSpacing = 100;
+    private _xSpacing = 200;
 
     assignCoord(layers: IVertex[][]) {
         // Find the max

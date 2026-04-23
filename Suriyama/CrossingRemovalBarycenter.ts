@@ -1,3 +1,6 @@
+import { IGraph } from "../Graph/interface/IGraph";
+import { IVertex } from "../Graph/interface/IVertex";
+
 export class CrossingRemovalBarycenter {
 
     removeCrossings(
@@ -47,7 +50,7 @@ export class CrossingRemovalBarycenter {
                 : originalIndex.get(a)! - originalIndex.get(b)!;
         });
     }
-    
+
     /**
      * Calculate the barycenter = 1/deg(u) * sum(x(v))
      * @param layer Free Layer To Calculate barycenter

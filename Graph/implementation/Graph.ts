@@ -1,5 +1,9 @@
 //DIRECTED GRAPH
 
+import { IEdge } from "../interface/IEdge";
+import { IGraph } from "../interface/IGraph";
+import { IVertex } from "../interface/IVertex";
+
 export class Graph implements IGraph {
 
     private vertices = new Set<IVertex>();
@@ -12,12 +16,12 @@ export class Graph implements IGraph {
     getEdges(): IEdge[] {
         return Array.from(this.edges.values());
     }
-    getDegreeOf(v: IVertex): number {
+    getOutDegree(v: IVertex): number {
         let edgeList = this.incidentEdges.get(v);
         return edgeList ? edgeList.length : 0;
     }
     getIncidentEdgesOf(v1: IVertex): IEdge[] {
-        return this.incidentEdges.get(v1)!;
+        return this.incidentEdges.get(v1) ?? [];
     }
 
     getEdgeOf(v1: IVertex, v2: IVertex): IEdge {
@@ -34,7 +38,10 @@ export class Graph implements IGraph {
         let edges = this.getIncidentEdgesOf(v1);
         if (edges)
             for (let edg of edges) {
-                list.push(edg.getOpposite(v1));
+                let opposite = edg.getOpposite(v1);
+                if (opposite) {
+                    list.push(opposite);
+                }
             }
         return list;
     }
@@ -48,11 +55,14 @@ export class Graph implements IGraph {
         }
     }
     addEdge(e1: IEdge): void {
-        let s = e1.getSource();
-        let t = e1.getTarget();
+        const s = e1.getSource();
+        const t = e1.getTarget();
+
+        this.addNode(s);
+        this.addNode(t);
+
         this.edges.add(e1);
         this.incidentEdges.get(s)!.push(e1);
-        // this.incidentEdges.get(t)!.push(e1);
     }
     removeNode(v1: IVertex): void {
         this.vertices.delete(v1);
@@ -62,7 +72,7 @@ export class Graph implements IGraph {
             this.removeEdge(edg);
         }
         // Ingoing Edges
-        for (let edge of this.edges) {
+        for (let edge of Array.from(this.edges)) {
             if (edge.getTarget().getId() == v1.getId()) {
                 this.removeEdge(edge);
             }
@@ -75,6 +85,7 @@ export class Graph implements IGraph {
     }
     bfsVisit(v1: IVertex): IVertex[] {
         const visited = new Set();
+        visited.add(v1);
         const queue = [v1];
         const list = new Set<IVertex>();
 
@@ -94,17 +105,23 @@ export class Graph implements IGraph {
         return Array.from(list.values());
     }
     dfsVisit(v1: IVertex): IVertex[] {
-        let visitedList: IVertex[] = [];
-        this.DFS(visitedList, v1);
-        return visitedList;
-    }
-    private DFS(list: IVertex[], v: IVertex) {
-        list.push(v);
-        const destinations = this.getAdjacentsOf(v);
-        for (const vertex of destinations) {
+        const visited = new Set<IVertex>();
+        const result: IVertex[] = [];
 
-            if (!list.includes(vertex)) {
-                this.DFS(list, vertex);
+        this.DFS(v1, visited, result);
+
+        return result;
+    }
+
+    private DFS(v: IVertex, visited: Set<IVertex>, result: IVertex[]) {
+        visited.add(v);
+        result.push(v);
+
+        const destinations = this.getAdjacentsOf(v);
+
+        for (const vertex of destinations) {
+            if (!visited.has(vertex)) {
+                this.DFS(vertex, visited, result);
             }
         }
     }
@@ -118,18 +135,18 @@ export class Graph implements IGraph {
      */
     isCyclic(): boolean {
 
-        let visitedList = new Map<IVertex, boolean>();
+        let visitedMap = new Map<IVertex, boolean>();
         let restack = new Map<IVertex, boolean>();
 
         this.vertices.forEach(vertex => {
-            visitedList.set(vertex, false);
+            visitedMap.set(vertex, false);
             restack.set(vertex, false);
         });
 
         let isCyclic = false;
         this.vertices.forEach(vertex => {
 
-            if (this.isCyclicDFS(vertex, visitedList, restack, undefined!)) {
+            if (this.isCyclicDFS(vertex, restack, visitedMap)) {
                 isCyclic = true;
             }
 
@@ -138,7 +155,7 @@ export class Graph implements IGraph {
         return isCyclic;
     }
 
-    private isCyclicDFS(v: IVertex, restack: Map<IVertex, boolean>, visited: Map<IVertex, boolean>, parent: IVertex): boolean {
+    private isCyclicDFS(v: IVertex, restack: Map<IVertex, boolean>, visited: Map<IVertex, boolean>): boolean {
         visited.set(v, true);
         restack.set(v, true);
 
@@ -147,7 +164,7 @@ export class Graph implements IGraph {
         for (const vertex of destinations) {
 
             if (visited.get(vertex) == false) {
-                if (this.isCyclicDFS(vertex, restack, visited, v) == true) {
+                if (this.isCyclicDFS(vertex, restack, visited) == true) {
                     return true;
                 }
             }
@@ -161,6 +178,7 @@ export class Graph implements IGraph {
     /**
      * 
      * @returns 0:inDegree, 1:outDegree
+     * TODO Very inefficient cache it
      */
     findInOutDegree(): { inDegree: Map<IVertex, number>, outDegree: Map<IVertex, number> } {
         //Time Complexity: O(V + E)
@@ -175,7 +193,7 @@ export class Graph implements IGraph {
         })
         this.vertices.forEach(
             (v) => {
-                outDegree.set(v, this.getDegreeOf(v))
+                outDegree.set(v, this.getOutDegree(v))
 
                 for (let adj of this.getAdjacentsOf(v)) {
                     let degree = inDegree.get(adj)!;
@@ -190,9 +208,9 @@ export class Graph implements IGraph {
         return this.findInOutDegree().inDegree.get(v) === 0;
     }
     isSink(v: IVertex) {
-        return this.getDegreeOf(v) === 0;
+        return this.getOutDegree(v) === 0;
     }
-    getSink() {
+    getSink() { //inDegree.get(v) === 0
         let mapOutDeg = this.findInOutDegree().outDegree.entries();
         for (let [key, value] of mapOutDeg) {
             if (value === 0) {
@@ -201,7 +219,7 @@ export class Graph implements IGraph {
         }
         return undefined!;
     }
-    getSource() {
+    getSource() {//outDegree.get(v) === 0
         let mapInDeg = this.findInOutDegree().inDegree.entries();
         for (let [key, value] of mapInDeg) {
             if (value === 0) {
@@ -230,7 +248,7 @@ export class Graph implements IGraph {
     getIncomingEdges(v: IVertex): IEdge[] {
         return this.getEdges().filter(e => e.getTarget() === v);
     }
-
+    // All edges where v is the source
     getOutgoingEdges(v: IVertex): IEdge[] {
         return this.getEdges().filter(e => e.getSource() === v);
     }

@@ -1,3 +1,5 @@
+import { IVertex } from "../interface/IVertex";
+
 export class Vertex implements IVertex{
 
     private static nextID = 0;

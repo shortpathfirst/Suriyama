@@ -1,3 +1,7 @@
+import { IEdge } from "../interface/IEdge";
+import { IVertex } from "../interface/IVertex";
+
+
 export class Edge implements IEdge{
     
     private static nextID = 0;
@@ -16,11 +20,11 @@ export class Edge implements IEdge{
         this.target = target;
         this.weight = 0;
     }
-    getOpposite(v1: IVertex):IVertex {
+    getOpposite(v1: IVertex):IVertex | null {
         if (this.source == v1) {
             return this.target;
          } else {
-            return this.target == v1 ? this.source : null!;
+            return this.target == v1 ? this.source : null;
          }
     }
     

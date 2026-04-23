@@ -5,6 +5,7 @@ import { GreedyCycleRemoval } from "./Suriyama/GreedyCycleRemoval.js";
 import { LongestPathLayering } from "./Suriyama/LongestPathLayering.js";
 
 
+
 export function SuriyamaMethodology(inputGraph: IGraph) {
 
     printGraph(inputGraph);

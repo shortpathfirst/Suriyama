@@ -1,6 +1,11 @@
-import { Edge } from "./Graph/Edge.js";
-import { Graph } from "./Graph/Graph.js";
-import { Vertex } from "./Graph/Vertex.js";
+
+import { Edge } from "./Graph/implementation/Edge.js";
+import { Graph } from "./Graph/implementation/Graph.js";
+import { Vertex } from "./Graph/implementation/Vertex.js";
+import { IEdge } from "./Graph/interface/IEdge.js";
+import { IGraph } from "./Graph/interface/IGraph.js";
+import { IVertex } from "./Graph/interface/IVertex.js";
+
 
 export function copyGraph(_graph:IGraph){
     //Make copy

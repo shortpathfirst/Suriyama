@@ -1,6 +1,10 @@
-import { Edge } from "../Graph/Edge.js";
-import { Vertex } from "../Graph/Vertex.js";
+
+import { Edge } from "../Graph/implementation/Edge.js";
+import { Vertex } from "../Graph/implementation/Vertex.js";
+import { IGraph } from "../Graph/interface/IGraph.js";
+import { IVertex } from "../Graph/interface/IVertex.js";
 import { copyGraph } from "../GraphUtils.js";
+
 
 export class LongestPathLayering {
 
