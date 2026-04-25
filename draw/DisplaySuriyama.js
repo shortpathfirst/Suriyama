@@ -2,13 +2,24 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function displaySuriyama(layers, dummyGraph, originalG, coordMap) {
 
-    const width = 900;
-    const height = 680;
+    // Calculate bounding box from coordinates
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const coord of coordMap.values()) {
+        minX = Math.min(minX, coord.x);
+        maxX = Math.max(maxX, coord.x);
+        minY = Math.min(minY, coord.y);
+        maxY = Math.max(maxY, coord.y);
+    }
+
+    const margin = 50;
+    const width = maxX - minX + 2 * margin;
+    const height = maxY - minY + 2 * margin;
+
     // Create the SVG container.
     const svg = d3.create("svg")
         .attr("width", width)
         .attr("height", height)
-        .attr("viewBox", [0, -100, width, height])
+        .attr("viewBox", [minX - margin, minY - margin, width, height])
         .attr("style", "max-width: 100%; height: auto;");
 
     // Specify the color scale.
