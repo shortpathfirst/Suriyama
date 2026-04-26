@@ -1,3 +1,4 @@
+import { IGraph } from "./Graph/interface/IGraph.js";
 import { printGraph } from "./GraphUtils.js";
 import { CoordinateAssignment } from "./Suriyama/CoordinatesAssignment.js";
 import { CrossingRemovalBarycenter } from "./Suriyama/CrossingRemovalBarycenter.js";
