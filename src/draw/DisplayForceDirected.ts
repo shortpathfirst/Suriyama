@@ -1,6 +1,11 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import * as d3 from "d3";
+import type { dataObject } from "../main";
 
-export function displayForceDirected(dataNodes,dataLinks){
+interface MyNode extends d3.SimulationNodeDatum {
+    name: string;
+}
+
+export function displayForceDirected(dataNodes: string[], dataLinks: dataObject[]) {
     const width = 928;
     const height = 680;
 
@@ -9,13 +14,13 @@ export function displayForceDirected(dataNodes,dataLinks){
 
     // The force simulation mutates links and nodes, so create a copy
     // so that re-evaluating this cell produces the same result.
-    const links = dataLinks.map(d => ({...d}));
-    const nodes = dataNodes.map(d => ({name:d}));
+    const links = dataLinks.map((d) => ({ ...d }));
+    const nodes: MyNode[] = dataNodes.map((d: string) => ({ name: d }));
 
     // Create a simulation with several forces.
-    const simulation = d3.forceSimulation(nodes)
+    const simulation = d3.forceSimulation<MyNode>(nodes)
         .force('center', d3.forceCenter())
-        .force("link", d3.forceLink(links).id(d => d.name).distance(90))
+        .force("link", d3.forceLink<MyNode, d3.SimulationLinkDatum<MyNode>>(links).id((d) => d.name).distance(90))
         .force("charge", d3.forceManyBody().strength(-800))
         .force("x", d3.forceX())
         .force("y", d3.forceY());
@@ -27,7 +32,7 @@ export function displayForceDirected(dataNodes,dataLinks){
         .attr("height", height)
         .attr("viewBox", [-width / 2, -height / 2, width, height])
         .attr("style", "max-width: 100%; height: auto;");
-    
+
     //Create Arrow def
     svg.append("defs").selectAll("marker")
         .data(["end"])
@@ -51,8 +56,8 @@ export function displayForceDirected(dataNodes,dataLinks){
         .data(links)
         .join("path")
         .attr("stroke-width", 2)
-        .attr("fill","none")
-        .attr("marker-end", d => `url(${new URL(`#arrow-end`, location)})`);
+        .attr("fill", "none")
+        .attr("marker-end", `url(${new URL(`#arrow-end`, location.href)})`);
 
     // Add node
     const node = svg.append("g")
@@ -61,11 +66,11 @@ export function displayForceDirected(dataNodes,dataLinks){
         .selectAll("circle")
         .data(nodes)
         .join("circle")
-        .attr("r",15)
-        .attr("fill", d => color(d.group))
-        .attr("cursor","pointer");
+        .attr("r", 15)
+        .attr("fill", (d: any) => color(d.group))
+        .attr("cursor", "pointer");
     node.append("title")
-        .text(d =>d.name);
+        .text((d: any) => d.name);
 
     // Add label to each node
     const label = svg.append("g")
@@ -74,81 +79,71 @@ export function displayForceDirected(dataNodes,dataLinks){
         .selectAll(".mytext")
         .data(nodes)
         .join("text")
-        .text(function(d) {
-			return d.name
-		})
-		.attr('x', function(d) {
-			return d.x
-		})
-		.attr('y', function(d) {
-			return d.y
-		})
-		.attr('dy', function(d) {
-			return -15
-		})
-        .attr('dx', function(d) {
-			return 0
-		})
+        .text(d => d.name)
+        .attr('x', d => d.x!)
+        .attr('y', (d) => d.y!)
+        .attr('dy', -15)
+        .attr('dx', 0)
         .style("text-anchor", "middle")
         .style("stroke", "black")
         .style("font-size", 20)
-        .style("opacity",0.7)
-        .attr("cursor","pointer");
+        .style("opacity", 0.7)
+        .attr("cursor", "pointer");
 
-     // Add a drag behavior.
-    node.call(d3.drag()
+    // Add a drag behavior.
+    (node as any).call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended));
-    label.call(d3.drag()
+    (label as any).call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended));
 
-     // Set the position attributes of links and nodes each time the simulation ticks.
+    // Set the position attributes of links and nodes each time the simulation ticks.
     simulation.on("tick", () => {
         link
-            .attr("x1", d => d.source.x)
-            .attr("y1", d => d.source.y)
-            .attr("x2", d => d.target.x)
-            .attr("y2", d => d.target.y)
-            .attr("d", function(d) {
-        var dx = d.target.x - d.source.x,
-            dy = d.target.y - d.source.y,
-            dr = Math.sqrt(dx * dx + dy * dy);
-        return "M" + 
-            d.source.x + "," + 
-            d.source.y + "A" + 
-            dr + "," + dr + " 0 0,1 " + 
-            d.target.x + "," + 
-            d.target.y;
-    });
+            .attr("x1", (d: any) => d.source.x)
+            .attr("y1", (d: any) => d.source.y)
+            .attr("x2", (d: any) => d.target.x)
+            .attr("y2", (d: any) => d.target.y)
+            .attr("d", function (d: any) {
+                var dx = d.target.x - d.source.x,
+                    dy = d.target.y - d.source.y,
+                    dr = Math.sqrt(dx * dx + dy * dy);
+                return "M" +
+                    d.source.x + "," +
+                    d.source.y + "A" +
+                    dr + "," + dr + " 0 0,1 " +
+                    d.target.x + "," +
+                    d.target.y;
+            });
 
 
         node
-            .attr("cx", d => d.x)
-            .attr("cy", d => d.y);
+            .attr("cx", (d) => d.x!)
+            .attr("cy", (d) => d.y!);
         label
-            .attr("x", d => d.x)
-            .attr("y", d => d.y);
+            .attr("x", (d) => d.x!)
+            .attr("y", (d) => d.y!);
     });
 
-     // Reheat the simulation when drag starts, and fix the subject position.
-    function dragstarted(event) {
+    // Reheat the simulation when drag starts, and fix the subject position.
+    function dragstarted(event: any) {
         if (!event.active) simulation.alphaTarget(0.3).restart();
         event.subject.fx = event.subject.x;
         event.subject.fy = event.subject.y;
     }
 
     // Update the subject (dragged node) position during drag.
-    function dragged(event) {
+    function dragged(event: any) {
         event.subject.fx = event.x;
         event.subject.fy = event.y;
     }
 
     // Restore the target alpha so the simulation cools after dragging ends.
-    // Unfix the subject position now that it’s no longer being dragged.
-    function dragended(event) {
+    // Unfix the subject position now that it's no longer being dragged.
+    function dragended(event: any) {
         if (!event.active) simulation.alphaTarget(0);
         event.subject.fx = null;
         event.subject.fy = null;

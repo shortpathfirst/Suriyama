@@ -1,8 +1,7 @@
 //DIRECTED GRAPH
-
-import { IEdge } from "../interface/IEdge";
-import { IGraph } from "../interface/IGraph";
-import { IVertex } from "../interface/IVertex";
+import type { IEdge } from "../interface/IEdge";
+import type { IGraph } from "../interface/IGraph";
+import type { IVertex } from "../interface/IVertex";
 
 export class Graph implements IGraph {
 

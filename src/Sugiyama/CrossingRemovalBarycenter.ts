@@ -1,5 +1,5 @@
-import { IGraph } from "../Graph/interface/IGraph";
-import { IVertex } from "../Graph/interface/IVertex";
+import type { IGraph } from "../Graph/interface/IGraph";
+import type { IVertex } from "../Graph/interface/IVertex";
 
 export class CrossingRemovalBarycenter {
 

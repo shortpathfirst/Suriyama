@@ -1,5 +1,6 @@
-import { IGraph } from "../Graph/interface/IGraph.js";
+import type { IGraph } from "../Graph/interface/IGraph.js";
 import { copyGraph } from "../GraphUtils.js";
+
 
 
 export class GreedyCycleRemoval {

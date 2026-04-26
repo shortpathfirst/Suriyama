@@ -1,4 +1,4 @@
-import { IVertex } from "./IVertex";
+import { type IVertex } from "./IVertex";
 
 export interface IEdge{
     getId():number;

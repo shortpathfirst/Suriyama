@@ -1,74 +1,25 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+<!doctype html>
+<html lang="en">
 
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    #display {
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        overflow: auto;
-        background: aliceblue;
-        min-height: 600px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-
-    #display svg {
-        /* Each SVG tries to take up 45% of the width (leaving room for gaps) */
-        flex: 1 1 45%;
-
-        /* Ensure they don't get too small or too huge */
-        min-width: 300px;
-        max-width: 100%;
-        max-height: 600px;
-        height: auto;
-    }
-
-    #form {
-        margin-top: 2rem;
-        display: flex;
-        flex-direction: column;
-        max-width: 400px;
-        gap: 10px;
-    }
-
-    #graph-submit {
-        cursor: pointer;
-        padding: 8px 16px;
-        border-radius: 4px;
-        font-size: 13px;
-        font-weight: 500;
-        align-self: flex-start;
-    }
-</style>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sugiyama</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
 
 <body>
-    <div id="display"></div>
+  <div id="app-container">
     <form id="form">
-        <textarea id="graph-input" rows="5" cols="33"></textarea>
-        <input id="graph-submit" type="submit" value="Submit">
+      <textarea id="graph-input" rows="15" cols="10"></textarea>
+      <input id="graph-submit" type="submit" value="Submit">
     </form>
 
-    <script type="module" src="./draw/index.js"></script>
+    <div id="display"></div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>

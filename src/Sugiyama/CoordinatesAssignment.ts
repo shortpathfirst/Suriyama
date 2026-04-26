@@ -1,4 +1,4 @@
-import { IVertex } from "../Graph/interface/IVertex";
+import { type IVertex } from "../Graph/interface/IVertex";
 
 export class CoordinateAssignment {
     private _ySpacing = 100;

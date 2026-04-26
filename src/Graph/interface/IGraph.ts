@@ -1,5 +1,5 @@
-import { IEdge } from "./IEdge";
-import { IVertex } from "./IVertex";
+import type { IEdge } from "./IEdge";
+import type { IVertex } from "./IVertex";
 
 export interface IGraph {
     getVertices(): IVertex[];

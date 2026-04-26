@@ -1,5 +1,5 @@
-import { IEdge } from "../interface/IEdge";
-import { IVertex } from "../interface/IVertex";
+import { type IEdge } from "../interface/IEdge";
+import { type IVertex } from "../interface/IVertex";
 
 
 export class Edge implements IEdge{

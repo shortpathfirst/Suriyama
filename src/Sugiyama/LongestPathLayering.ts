@@ -1,13 +1,13 @@
 
 import { Edge } from "../Graph/implementation/Edge.js";
 import { Vertex } from "../Graph/implementation/Vertex.js";
-import { IGraph } from "../Graph/interface/IGraph.js";
-import { IVertex } from "../Graph/interface/IVertex.js";
+import type { IGraph } from "../Graph/interface/IGraph.js";
+import type { IVertex } from "../Graph/interface/IVertex.js";
 import { copyGraph } from "../GraphUtils.js";
 
 
 export class LongestPathLayering {
-
+    
     constructor(private graph: IGraph) {
     }
     computeLayering() {

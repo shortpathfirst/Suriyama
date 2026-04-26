@@ -1,6 +1,10 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-export function displaySuriyama(layers, dummyGraph, originalG, coordMap) {
+import * as d3 from "d3";
+import type { IGraph } from "../Graph/interface/IGraph";
+import type { IVertex } from "../Graph/interface/IVertex";
+
+
+export function displaySugiyama(layers: IVertex[][], dummyGraph: IGraph, originalG: IGraph, coordMap: Map<IVertex, { x: number, y: number }>) {
 
     // Calculate bounding box from coordinates
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
@@ -42,10 +46,10 @@ export function displaySuriyama(layers, dummyGraph, originalG, coordMap) {
 
     //Append Edges
     for (let edge of dummyGraph.getEdges()) {
-        let x1 = coordMap.get(edge.getSource()).x;
-        let x2 = coordMap.get(edge.getTarget()).x;
-        let y1 = coordMap.get(edge.getSource()).y;
-        let y2 = coordMap.get(edge.getTarget()).y;
+
+        let { x: x1 = 0, y: y1 = 0 } = coordMap.get(edge.getSource()) || {};
+        let { x: x2 = 0, y: y2 = 0 } = coordMap.get(edge.getTarget()) || {};
+
         const link = svg.append("g")
             .attr("stroke", "#999")
             .attr("stroke-opacity", 0.6)
@@ -57,24 +61,26 @@ export function displaySuriyama(layers, dummyGraph, originalG, coordMap) {
             .attr("stroke-width", 2)
             .attr("fill", "none")
         if (originalG.getVertices().includes(edge.getTarget()))
-            link.attr("marker-end", d => `url(${new URL(`#arrow-end`, location)})`);
+            link.attr("marker-end", `url(${new URL(`#arrow-end`, location.href)})`);
     }
     //Append nodes
     for (let i = 0; i < layers.length; i++) {
-        const node = svg.append("g")
+        // const node = 
+        svg.append("g")
             .attr("stroke", "#fff")
             .attr("stroke-width", 1.5)
             .selectAll("circle")
             .data(layers[i])
             .join("circle")
             .attr("r", (d) => { if (originalG.getVertices().includes(d)) { return 15 } else { return 0 } })
-            .attr("cx", (d) => { return coordMap.get(d).x })
-            .attr("cy", (d) => { return coordMap.get(d).y })
-            .attr("fill", d => color(d.group))
+            .attr("cx", (d) => coordMap.get(d)?.x ?? 0)
+            .attr("cy", (d) => coordMap.get(d)?.y ?? 0)
+            .attr("fill", d => color("" + d.getWeight()))
             .attr("cursor", "pointer");
 
         // Add label to each node
-        const label = svg.append("g")
+        // const label =
+        svg.append("g")
             .attr("stroke", "#fff")
             .attr("stroke-width", 1.5)
             .selectAll(".mytext")
@@ -83,18 +89,10 @@ export function displaySuriyama(layers, dummyGraph, originalG, coordMap) {
             .text(function (d) {
                 if (originalG.getVertices().includes(d)) { return d.getLabel() } else { return "" }
             })
-            .attr('x', function (d) {
-                return coordMap.get(d).x;
-            })
-            .attr('y', function (d) {
-                return coordMap.get(d).y;
-            })
-            .attr('dy', function (d) {
-                return 3;
-            })
-            .attr('dx', function (d) {
-                return 0;
-            })
+            .attr('x', (d) => coordMap.get(d)?.x ?? 0)
+            .attr('y', (d) => coordMap.get(d)?.y ?? 0)
+            .attr('dy', 3)
+            .attr('dx', 0)
             .style("text-anchor", "middle")
             .style("stroke", "black")
             .style("font-size", 20)

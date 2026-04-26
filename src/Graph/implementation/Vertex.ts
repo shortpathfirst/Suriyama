@@ -1,4 +1,4 @@
-import { IVertex } from "../interface/IVertex";
+import { type IVertex } from "../interface/IVertex";
 
 export class Vertex implements IVertex{
 
