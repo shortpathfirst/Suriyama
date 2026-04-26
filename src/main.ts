@@ -49,18 +49,10 @@ function parseTextArea(text: string): dataObject[] {
 
 
 function displayData(data: dataObject[]) {
-    var nodesSet = new Set<string>();
-
-    // Compute the distinct nodes from the links.
-    data.forEach((link) => {
-        nodesSet.add(link.source);
-        nodesSet.add(link.target);
-    });
-
-    let graphFromData = computeGraph(nodesSet, data);
+    let graphFromData = computeGraph(data);
     let { layers, graphDummy, coordMap } = SugiyamaMethodology(graphFromData);
 
-    let svgForceDirected = displayForceDirected(Array.from(nodesSet), data);
+    let svgForceDirected = displayForceDirected(data);
     let svgSugiyama = displaySugiyama(layers, graphDummy, graphFromData, coordMap);
 
     d3.select("#display").append(() => svgForceDirected);
@@ -77,8 +69,8 @@ async function fetchData(file: string) {
     console.log(data)
     return data;
 }
-function computeGraph(nodesSet: Set<string>, data: dataObject[]) {
-    return generateGraph(nodesSet, data);
+function computeGraph(data: dataObject[]) {
+    return generateGraph(data);
     // return generate_slide_graph();
 }
 

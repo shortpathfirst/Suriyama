@@ -5,7 +5,7 @@ interface MyNode extends d3.SimulationNodeDatum {
     name: string;
 }
 
-export function displayForceDirected(dataNodes: string[], dataLinks: dataObject[]) {
+export function displayForceDirected(dataLinks: dataObject[]) {
     const width = 928;
     const height = 680;
 
@@ -15,7 +15,15 @@ export function displayForceDirected(dataNodes: string[], dataLinks: dataObject[
     // The force simulation mutates links and nodes, so create a copy
     // so that re-evaluating this cell produces the same result.
     const links = dataLinks.map((d) => ({ ...d }));
-    const nodes: MyNode[] = dataNodes.map((d: string) => ({ name: d }));
+
+    const nodesMap = new Map<string, MyNode>();
+
+    dataLinks.forEach(({ source, target }) => {
+        if (!nodesMap.has(source)) nodesMap.set(source, { name: source });
+        if (!nodesMap.has(target)) nodesMap.set(target, { name: target });
+    });
+
+    const nodes = Array.from(nodesMap.values());
 
     // Create a simulation with several forces.
     const simulation = d3.forceSimulation<MyNode>(nodes)
