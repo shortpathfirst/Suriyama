@@ -5,6 +5,7 @@ import { Vertex } from "./Graph/implementation/Vertex.js";
 import type { IEdge } from "./Graph/interface/IEdge.js";
 import type { IGraph } from "./Graph/interface/IGraph.js";
 import type { IVertex } from "./Graph/interface/IVertex.js";
+import type { dataObject } from "./main.js";
 
 
 export function copyGraph(_graph:IGraph){
@@ -19,7 +20,7 @@ export function copyGraph(_graph:IGraph){
     return copy;
 }
 
-export function generateGraph(nodesSet:Set<string>,data:any){
+export function generateGraph(nodesSet:Set<string>,data:dataObject[]){
     let graph = new Graph();
     let labelMap = new Map<string,IVertex>();
     let arrayNodes = Array.from(nodesSet);

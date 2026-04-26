@@ -10,39 +10,45 @@ const form = document.getElementById("form") as HTMLFormElement | null;
 export type dataObject = {
     source: string;
     target: string;
-    value: number;
-}
-
-if (form && textArea) {
-    form.addEventListener('submit', (e) => {
-        //Todo Throw errors
-        e.preventDefault();
-        let text = textArea.value;
-        let rows = text.split('\n');
-        let dataObjects = [];
-        for (let row of rows) {
-            let a = row.split(',');
-            if (a[0] === a[1])
-                throw Error("cannot contain self cycle")
-            let object = { source: a[0], target: a[1], value: NaN };
-            dataObjects.push(object);
-        }
-        d3.select("#display").selectAll("svg").remove();
-        displayData(dataObjects);
-    });
 }
 
 fetchData("data/test.csv").then((data) => {
-    displayData(data);
-});
-
-function displayData(data: dataObject[]) {
     // Format data to add to the form
     const formattedData = data
         .map((link) => `${link.source},${link.target}`)
         .join("\n");
     if (textArea) textArea.value = formattedData;
 
+    displayData(data);
+});
+
+if (form && textArea) {
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Remove previous svg
+        d3.select("#display").selectAll("svg").remove();
+        // Display data
+        displayData(parseTextArea(textArea.value));
+    });
+}
+function parseTextArea(text: string): dataObject[] {
+    let rows = text.split('\n');
+    let dataObjects = [];
+    for (let row of rows) {
+        let edge = row.split(',');
+        if (edge[0] === edge[1])
+            throw Error("cannot contain self cycle");
+
+        dataObjects.push({
+            source: edge[0],
+            target: edge[1]
+        });
+    }
+    return dataObjects
+}
+
+
+function displayData(data: dataObject[]) {
     var nodesSet = new Set<string>();
 
     // Compute the distinct nodes from the links.
@@ -66,7 +72,6 @@ async function fetchData(file: string) {
         return {
             source: d.source,
             target: d.target,
-            value: +d.value,
         }
     });
     console.log(data)
