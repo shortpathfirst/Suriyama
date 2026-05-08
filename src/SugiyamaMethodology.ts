@@ -4,7 +4,6 @@ import { CoordinateAssignment } from "./Sugiyama/CoordinatesAssignment.js";
 import { CrossingRemovalBarycenter } from "./Sugiyama/CrossingRemovalBarycenter.js";
 import { GreedyCycleRemoval } from "./Sugiyama/GreedyCycleRemoval.js";
 import { LongestPathLayering } from "./Sugiyama/LongestPathLayering.js";
-// import { Packing } from "./Sugiyama/Packing.js";
 
 
 export function SugiyamaMethodology(inputGraph: IGraph) {
@@ -27,10 +26,6 @@ export function SugiyamaMethodology(inputGraph: IGraph) {
     let ca = new CoordinateAssignment();
     let coordMap = ca.assignCoord(layers);
 
-    // const packing = new Packing();
-    // const packedCoordMap = packing.pack(layers, graphDummy, coordMap);
-    // return [layers, graphDummy, inputGraph, packedCoordMap];
-    // IT MODIFY THE INPUT GRAPH!!!
     return {layers, graphDummy, coordMap};
 
 }

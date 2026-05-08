@@ -1,8 +1,6 @@
 import type { IGraph } from "../Graph/interface/IGraph.js";
 import { copyGraph } from "../GraphUtils.js";
 
-
-
 export class GreedyCycleRemoval {
 
     private graphCopy: IGraph;
@@ -43,7 +41,7 @@ export class GreedyCycleRemoval {
             //(a) 
             while (this.graphCopy.getSink()) {
                 let sink = this.graphCopy.getSink();
-                if(!sink) break;
+                if (!sink) break;
                 this.graphCopy.removeNode(sink);
                 Sr.unshift(sink);
                 // console.log("Removed sink:",sink.getId())
@@ -51,7 +49,7 @@ export class GreedyCycleRemoval {
             //(b)
             while (this.graphCopy.getSource()) {
                 let source = this.graphCopy.getSource();
-                if(!source) break;
+                if (!source) break;
                 this.graphCopy.removeNode(source);
                 Sl.push(source);
                 // console.log("Removed source:",source.getId())

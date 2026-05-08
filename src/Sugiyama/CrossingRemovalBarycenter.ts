@@ -8,9 +8,7 @@ export class CrossingRemovalBarycenter {
         graph: IGraph,
         iterations = 4
     ) {
-
         for (let iter = 0; iter < iterations; iter++) {
-
             // 🔽 Downward sweep
             for (let i = 1; i < layers.length; i++) {
                 this.orderLayer(layers[i - 1], layers[i], graph, true);

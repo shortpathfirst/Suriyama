@@ -15,7 +15,7 @@ export function displaySugiyama(layers: IVertex[][], dummyGraph: IGraph, origina
         maxY = Math.max(maxY, coord.y);
     }
 
-    const margin = 50;
+    const margin = 100;
     const width = maxX - minX + 2 * margin;
     const height = maxY - minY + 2 * margin;
 
@@ -95,7 +95,7 @@ export function displaySugiyama(layers: IVertex[][], dummyGraph: IGraph, origina
             .attr('dx', 0)
             .style("text-anchor", "middle")
             .style("stroke", "black")
-            .style("font-size", 20)
+            .style("font-size", 14)
             .style("opacity", 0.7)
             .attr("cursor", "pointer");
     }
