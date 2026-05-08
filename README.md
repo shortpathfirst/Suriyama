@@ -1,28 +1,42 @@
-
-
-# Suriyama Methodology
+# Sugiyama Methodology
 
 ### What is it
-> Layered graph drawing or hierarchical graph drawing is a type of graph drawing in which the vertices of a directed graph are drawn in horizontal rows or layers with the edges generally directed downwards. It is also known as Sugiyama-style graph drawing after Kozo Sugiyama, who first developed this drawing style.
+> **Layered graph drawing** or hierarchical graph drawing is a type of graph drawing in which the vertices of a directed graph are drawn in horizontal rows or layers with the edges generally directed downwards. It is also known as Sugiyama-style graph drawing after Kozo Sugiyama, who first developed this drawing style.
+
+The Sugiyama Method(or the Sugiyama-framework) is the gold standard for creating layered drawings or DAGs.
+The layout algorithm consists of four-major steps: Cycle Removal, Layer Assignment, Crossing Reduction, and Straightening and Packing. 
 
 ### The problem
 Given a **Direct Graph**
 
 **1.  Cycle removal** : 
->By inverting the direction of some of the edges we remove every cycle.
+>Make the graph a **DAG (Directed Acyclic Graph)**.
+By inverting the direction of some of the edges we remove every cycle.
+
+<img src="./doc/1.svg" height="250"/>
 
 **2.  Layer assignment**
->Assign nodes to layers and adding dummy nodes for long edges (spanning multiple layers)
+>Assign nodes to layers, discretes y-coordinates and adding dummy nodes for long edges (spanning multiple layers)
+
+<img src="./doc/2.svg" height="250"/>
 
 **3.  Crossing removal**
->Ordering nodes across layers
+>Ordering nodes across layers to minimize intersections.
 Here we add dummy nodes.
 
-**4. Assign coordinates and remove dummy nodes**
+<img src="./doc/3.svg" height="250"/>
+
+**4. Assign coordinates**
+>Assign exact X-coordinates and remove dummy nodes*.
+
+<img src="./doc/4.svg" height="250"/>
+
+**5. Drawing**
+>Draw the actual lines/curves and nodes.
 
 # Implementation
 ```ts
-export function SuriyamaMethodology(inputGraph:IGraph){
+export function SugiyamaMethodology(inputGraph:IGraph){
 
     printGraph(inputGraph);
     console.log("Is cyclic?",inputGraph.isCyclic());
@@ -36,7 +50,7 @@ export function SuriyamaMethodology(inputGraph:IGraph){
  
     // Calculate Longest Path Layering
     let lpl = new LongestPathLayering(inputGraph);
-    let {layers,graphDummy} = lpl.computeLayering();
+    let { layers, graphDummy } = lpl.computeLayering();
 
     //Remove Crossings using barycentr algorithm
     let cr = new CrossingRemovalBarycenter();
@@ -46,7 +60,7 @@ export function SuriyamaMethodology(inputGraph:IGraph){
     let ca = new CoordinateAssignment();
     let coordMap = ca.assignCoord(layers);
 
-    return [layers,graphDummy,inputGraph,coordMap];
+    return {layers, graphDummy, coordMap};
 
 }
 ```
@@ -81,7 +95,24 @@ private invertLewardEdges(){
 }
 ```
 ## 2. Longest Path layering
-The longest path algorithm of Tamassia determine a layering with the minimum number of complexity O(n+m)
+The longest path algorithm of Tamassia determine a layering with the minimum number of complexity `O(n+m)`
+```ts
+private assignLayers() {
+    let graph = copyGraph(this.graph);
+    // Define Layers
+    let layers = [];
+
+    while (graph.getSink()) {
+        let sinks = graph.getAllSinks();
+
+        layers.unshift(sinks);
+        for (let sink of sinks) {
+            graph.removeNode(sink);
+        }
+    }
+    return layers;
+}
+```
 ```ts
 let layers = this.assignLayers();
 let graphDummy =  this.createDummyVerteces(layers);
@@ -138,25 +169,29 @@ let graphDummy =  this.createDummyVerteces(layers);
 ```
 ## 4. Coordinates Assignment
 ```ts
-    assignCoord(layers:IVertex[][]){
-        let maxLayer = 0;
-        for(let layer of layers){
-            if(layer.length > maxLayer)
-                maxLayer = layer.length;
-        }
-   
-        let map = new Map<IVertex,{x:number,y:number}>();
+assignCoord(layers: IVertex[][]) {
 
-        for(let i=0; i< layers.length; i++){
+    let map = new Map<IVertex, { x: number, y: number }>();
 
-            let dx = maxLayer*this._xSpacing/layers[i].length;
-            let x = dx/2;
-            let y = i * this._ySpacing;
-            for(let j=0; j<layers[i].length; j++){
-                map.set(layers[i][j],{x:x,y:y});
-                x+=dx;
-            }
+    let maxLayer = Math.max(...layers.map(l => l.length));
+
+    for (let i = 0; i < layers.length; i++) {
+        const dx = (maxLayer * this._xSpacing) / layers[i].length;
+
+        let x = dx / 2;
+        let y = i * this._ySpacing;
+
+        for (let v of layers[i]) {
+            map.set(v, { x, y });
+            x += dx;
         }
-        return map;
     }
+
+    return map;
+}
 ```
+
+
+## 5. Drawing
+
+For rendering and visualization, we use [D3.js](https://d3js.org/), a powerful JavaScript library for creating dynamic and interactive data-driven graphics. D3 provides control over DOM and SVG elements, allowing us to render nodes using the calculated **x** and **y** coordinates.
