@@ -59,10 +59,31 @@ body {
 }
 
 #form {
-  flex: 0 0 80px;
+  flex: 0 0 220px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.input-guide {
+  color: #ffffff;
+}
+
+.input-guide label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.input-guide p {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+
+.input-guide code {
+  font-family: monospace;
 }
 
 #graph-submit {

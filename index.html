@@ -5,14 +5,18 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sugiyama</title>
+  <title>Sugiyama</title>
   <link rel="stylesheet" href="./src/style.css">
 </head>
 
 <body>
   <div id="app-container">
     <form id="form">
-      <textarea id="graph-input" rows="15" cols="10"></textarea>
+      <div class="input-guide">
+        <label for="graph-input">Directed graph</label>
+        <p id="graph-input-guide">Enter one edge per line as <code>source,target</code>, then submit.</p>
+      </div>
+      <textarea id="graph-input" rows="15" cols="10" aria-describedby="graph-input-guide"></textarea>
       <input id="graph-submit" type="submit" value="Submit">
     </form>
 
